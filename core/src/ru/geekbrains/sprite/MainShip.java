@@ -4,8 +4,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPool;
+import ru.geekbrains.pool.ExplosionPool;
 
 public class MainShip extends Ship {
 
@@ -19,9 +21,10 @@ public class MainShip extends Ship {
 
 
 
-    public MainShip(TextureAtlas atlas, BulletPool bulletPool, Sound shootSound) {
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool, Sound shootSound) {
         super(atlas.findRegion("main_ship"), 1, 2 ,2);
         this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
         this.speed = new Vector2();
         this.speed0 = new Vector2(0.5f, 0);
         this.bulletRegion = atlas.findRegion("bulletMainShip");
@@ -43,6 +46,11 @@ public class MainShip extends Ship {
     @Override
     public void update(float delta) {
         super.update(delta);
+        reloadTimer += delta;
+        if(reloadTimer >= reloadInterval){
+            reloadTimer = 0f;
+            shoot();
+        }
         if(getRight() > worldBounds.getRight()){
             setRight(worldBounds.getRight());
             stop();
@@ -64,10 +72,6 @@ public class MainShip extends Ship {
             case Input.Keys.RIGHT:
                 pressedRight = true;
                 moveRight();
-                break;
-            case Input.Keys.W:
-            case Input.Keys.UP:
-                shoot();
                 break;
         }
         return false;
@@ -138,7 +142,12 @@ public class MainShip extends Ship {
         return false;
     }
 
-
+    public boolean isBulletCollision(Rect bullet){
+        return !(bullet.getRight() < getLeft()
+                || bullet.getLeft() > getRight()
+                || bullet.getBottom() > pos.y
+                || bullet.getTop() < getBottom());
+    }
 
     private void moveRight(){
         speed.set(speed0);
