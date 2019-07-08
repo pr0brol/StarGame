@@ -9,7 +9,7 @@ import ru.geekbrains.math.Rnd;
 
 public class Star extends Sprite {
 
-    private Vector2 speed = new Vector2();
+    protected Vector2 speed = new Vector2();
     private Rect worldBounds;
 
     public Star(TextureAtlas atlas) {
@@ -28,7 +28,12 @@ public class Star extends Sprite {
 
     @Override
     public void update(float delta) {
+        super.update(delta);
         pos.mulAdd(speed, delta);
+        checkAndHandleBounds();
+    }
+
+    protected void checkAndHandleBounds(){
         if(getRight() < worldBounds.getLeft()) setLeft(worldBounds.getRight());
         if(getLeft() > worldBounds.getRight()) setRight(worldBounds.getLeft());
         if(getTop() < worldBounds.getBottom()) setBottom(worldBounds.getTop());

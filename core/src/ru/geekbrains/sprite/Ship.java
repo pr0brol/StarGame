@@ -71,6 +71,25 @@ public abstract class Ship extends Sprite {
         }
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
+    public int getHP(){
+        return HP;
+    }
+
+    public void setHP(int health){
+        HP += health;
+        if(HP > 100){
+            HP = 100;
+        }
+    }
+
+    public Vector2 getSpeed(){
+        return speed;
+    }
+
     protected void shoot(){
         Bullet bullet = bulletPool.obtain();
         bullet.set(this, bulletRegion, pos, bulletSpeed, bulletHeight, worldBounds, damage);
