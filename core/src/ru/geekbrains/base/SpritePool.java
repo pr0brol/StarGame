@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.geekbrains.math.Rect;
+
 public abstract class SpritePool<T extends Sprite> {
 
     protected final List<T> activeObjects = new ArrayList<T>();
@@ -20,7 +22,6 @@ public abstract class SpritePool<T extends Sprite> {
             object = freeObjects.remove(freeObjects.size() - 1);
         }
         activeObjects.add(object);
-        System.out.println(getClass().getName() + " active/free " + activeObjects.size() + " / " + freeObjects.size());
         return object;
     }
 
@@ -29,6 +30,15 @@ public abstract class SpritePool<T extends Sprite> {
             Sprite sprite = activeObjects.get(i);
             if(!sprite.isDestroyed()){
                 sprite.update(delta);
+            }
+        }
+    }
+
+    public void resize(Rect worldBounds){
+        for(int i = 0; i < activeObjects.size(); i++){
+            Sprite sprite = activeObjects.get(i);
+            if(!sprite.isDestroyed()){
+                sprite.resize(worldBounds);
             }
         }
     }
@@ -53,11 +63,15 @@ public abstract class SpritePool<T extends Sprite> {
         }
     }
 
+    public void freeAllActiveSprites(){
+        freeObjects.addAll(activeObjects);
+        activeObjects.clear();
+    }
+
     public void free(T object){
         if(activeObjects.remove(object)){
             freeObjects.add(object);
         }
-        System.out.println(getClass().getName() + " active/free " + activeObjects.size() + " / " + freeObjects.size());
     }
 
     public List<T> getActiveObjects(){
