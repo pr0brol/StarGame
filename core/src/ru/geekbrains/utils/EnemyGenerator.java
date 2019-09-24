@@ -48,6 +48,10 @@ public class EnemyGenerator {
 
     private Rect worldBounds;
 
+    private int Level;
+    private int score;
+    private int CHANGE_LEVEL_COUNT = 100;
+
     public EnemyGenerator(TextureAtlas atlas, EnemyPool enemyPool, Rect worldBounds) {
         this.enemyPool = enemyPool;
         this.enemySmallSpeed = new Vector2(0f, -0.2f);
@@ -67,7 +71,33 @@ public class EnemyGenerator {
         bulletRegion = atlas.findRegion("bulletEnemy");
     }
 
-    public void generate(float delta){
+    public int getLevel() {
+        return Level;
+    }
+
+    public void setLevel(int level) {
+        Level = level;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void generate(float delta, int score){
+        Level = score / CHANGE_LEVEL_COUNT + 1;
+
+        if(((score % CHANGE_LEVEL_COUNT >= 0) && (score % CHANGE_LEVEL_COUNT <= 9)) && score > 10){
+            generateInterval -= 0.1f;
+            this.score += 10;
+            if(generateInterval < 1f){
+                generateInterval = 1f;
+            }
+        }
+
         generateTimer += delta;
         if(generateTimer >= generateInterval) {
             generateTimer = 0;
