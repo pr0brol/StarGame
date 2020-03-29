@@ -5,16 +5,28 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.math.Rect;
+import ru.geekbrains.utils.Regions;
+
 
 public class Sprite extends Rect {
+
     protected float angle;
     protected float scale = 1f;
     protected TextureRegion[] regions;
     protected int frame;
+    protected boolean destroyed;
 
     public Sprite(TextureRegion region) {
         regions = new TextureRegion[1];
         regions[0] = region;
+    }
+
+    public Sprite(TextureRegion region, int rows, int cols, int frames){
+        this.regions = Regions.split(region, rows, cols, frames);
+    }
+
+    public Sprite(){
+
     }
 
     public void draw(SpriteBatch batch) {
@@ -50,10 +62,6 @@ public class Sprite extends Rect {
         return false;
     }
 
-    public boolean keyDown(int keycode) {return false;}
-
-    public boolean keyUp(int keycode) {return false;}
-
     public float getAngle() {
         return angle;
     }
@@ -76,5 +84,17 @@ public class Sprite extends Rect {
 
     public void setFrame(int frame) {
         this.frame = frame;
+    }
+
+    public void destroy(){
+        destroyed = true;
+    }
+
+    public void flushDestroy(){
+        destroyed = false;
+    }
+
+    public boolean isDestroyed(){
+        return destroyed;
     }
 }

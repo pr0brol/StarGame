@@ -1,6 +1,8 @@
 package ru.geekbrains.screen;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,24 +17,24 @@ import ru.geekbrains.sprite.Star;
 
 public class MenuScreen extends BaseScreen {
 
+    private int STAR_COUNT = 256;
+
     private Game game;
 
-    public MenuScreen(Game game) {
-        this.game = game;
-    }
+    Music fonMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
 
     private Texture bg;
-
-    private int STAR_COUNT = 100;
-
     private Background background;
-
     private TextureAtlas atlas;
 
     private ButtonExit buttonExit;
     private ButtonPlay buttonPlay;
 
-    private Star[] stars = new Star[STAR_COUNT];
+    private Star[] stars;
+
+    public MenuScreen(Game game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
@@ -42,18 +44,20 @@ public class MenuScreen extends BaseScreen {
         atlas = new TextureAtlas("texture/menuAtlas/menuAtlas.pack");
         buttonExit = new ButtonExit(atlas);
         buttonPlay = new ButtonPlay(atlas, game);
-        for(int i = 0; i < STAR_COUNT; i++){
+        stars = new Star[STAR_COUNT];
+        for(int i = 0; i < stars.length; i++){
             stars[i] = new Star(atlas);
         }
-
+        fonMusic.play();
+        fonMusic.setLooping(true);
     }
 
     @Override
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
         background.resize(worldBounds);
-        for(int i = 0; i < STAR_COUNT; i++){
-            stars[i].resize(worldBounds);
+        for(Star star: stars){
+            star.resize(worldBounds);
         }
         buttonExit.resize(worldBounds);
         buttonPlay.resize(worldBounds);
@@ -67,16 +71,16 @@ public class MenuScreen extends BaseScreen {
     }
 
     public void update(float delta) {
-        for(int i = 0; i < STAR_COUNT; i++){
-            stars[i].update(delta);
+        for(Star star: stars){
+            star.update(delta);
         }
     }
 
     public void draw(){
         batch.begin();
         background.draw(batch);
-        for(int i = 0; i < STAR_COUNT; i++){
-            stars[i].draw(batch);
+        for(Star star: stars){
+            star.draw(batch);
         }
         buttonExit.draw(batch);
         buttonPlay.draw(batch);
@@ -87,6 +91,7 @@ public class MenuScreen extends BaseScreen {
     public void dispose() {
         bg.dispose();
         atlas.dispose();
+        fonMusic.dispose();
         super.dispose();
     }
 
